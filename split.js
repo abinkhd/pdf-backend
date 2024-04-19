@@ -7,6 +7,8 @@ const filename = "file_" + uniqueSuffix + ".pdf";
 const newPdfPath = "./files/download/" + filename;
 const dowloadPath = "files/download/" + filename;
 
+//function takes 3 parameters from extract api function 
+
 async function createSeparatePdfFile(uploadPath, existingPdf, requiredPages) {
   const path = uploadPath + existingPdf;
   console.log(path);
