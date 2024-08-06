@@ -50,9 +50,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 });
 
 app.post("/extract", async (req, res) => {
-  const page = req.body.pages;
+  let page = req.body.pages;
   console.log(fileName);
-  const downloadpath = await splitPdf.createSeparatePdfFile(uploadPath, fileName, page);
+  let downloadpath = await splitPdf.createSeparatePdfFile(uploadPath, fileName, page);
   console.log(downloadpath);
   res.send({ DownloadPath: "http://localhost:5000/" + downloadpath });
 });
