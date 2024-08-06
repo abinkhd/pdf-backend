@@ -54,7 +54,7 @@ app.post("/extract", async (req, res) => {
   console.log(fileName);
   let downloadpath = await splitPdf.createSeparatePdfFile(uploadPath, fileName, page);
   console.log(downloadpath);
-  res.send({ DownloadPath: "http://localhost:5000/" + downloadpath });
+  res.send({ DownloadPath: process.env.DOWNLOADPATH + downloadpath });
 });
 
 app.get("/get-files", async (req, res) => {
