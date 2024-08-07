@@ -1,30 +1,21 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const mongoose = require('mongoose')
-const process = require('process')
+const mongoose = require("mongoose");
+const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
-const app = express();
 app.use(express.json());
 const cors = require("cors");
 const splitPdf = require("./split.js");
 app.use(cors());
 app.use("/files", express.static("files"));
-const DB = process.env.DB;
-const DOWNLOADPATH = process.env.DOWNLOADPATH;
-
-// const client = new MongoClient(DB, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true,
-//   }
-// });
 
 //mongodb connection----------------------------------------------
-// console.log(process.env.NODE_ENV);
+
+const mongoUrl = process.env.DB;
+console.log(mongoUrl);
+
 mongoose
-  .connect(DB, {
+  .connect(mongoUrl, {
     useNewUrlParser: true,
   })
   .then(() => {
@@ -66,16 +57,15 @@ app.post("/extract", async (req, res) => {
   console.log(fileName);
   let downloadpath = await splitPdf.createSeparatePdfFile(uploadPath, fileName, page);
   console.log(downloadpath);
-  res.send({ DownloadPath: DOWNLOADPATH + downloadpath });
+  res.send({ DownloadPath: process.env.DOWNLOADPATH + downloadpath });
 });
 
 app.get("/get-files", async (req, res) => {
-  res.send('Welcome to getFiles');
-  // try {
-  //   PdfSchema.find({}).then((data) => {
-  //     res.send({ status: "ok", data: data });
-  //   });
-  // } catch (error) { }
+  try {
+    PdfSchema.find({}).then((data) => {
+      res.send({ status: "ok", data: data });
+    });
+  } catch (error) { }
 });
 
 //apis----------------------------------------------------------------
@@ -83,7 +73,7 @@ app.get("/", async (req, res) => {
   res.send("Success!!!!!!");
 });
 
-const Port = process.env.PORT || 5000;
+const Port = 5000;
 app.listen(Port, () => {
   console.log("Server Started ", Port);
 });
