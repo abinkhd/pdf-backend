@@ -1,24 +1,41 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const mongoose = require('mongoose')
+const process = require('process')
+const dotenv = require('dotenv');
+dotenv.config();
 const app = express();
 app.use(express.json());
 const cors = require("cors");
 const splitPdf = require("./split.js");
 app.use(cors());
 app.use("/files", express.static("files"));
+const DB = process.env.DB;
+const DOWNLOADPATH = process.env.DOWNLOADPATH;
+
+const client = new MongoClient(DB, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
 
 //mongodb connection----------------------------------------------
-
-const mongoUrl = "mongodb://localhost:27017/pdf";
-
-mongoose
-  .connect(mongoUrl, {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log("Connected to database");
-  })
-  .catch((e) => console.log(e));
+// console.log(process.env.NODE_ENV);
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
 //multer------------------------------------------------------------
 const multer = require("multer");
 const uploadPath = "./files/uploaded/";
@@ -54,10 +71,11 @@ app.post("/extract", async (req, res) => {
   console.log(fileName);
   let downloadpath = await splitPdf.createSeparatePdfFile(uploadPath, fileName, page);
   console.log(downloadpath);
-  res.send({ DownloadPath: process.env.DOWNLOADPATH + downloadpath });
+  res.send({ DownloadPath: DOWNLOADPATH + downloadpath });
 });
 
 app.get("/get-files", async (req, res) => {
+  res.send('Welcome to getFiles');
   try {
     PdfSchema.find({}).then((data) => {
       res.send({ status: "ok", data: data });
