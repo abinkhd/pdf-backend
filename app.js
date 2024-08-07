@@ -13,29 +13,24 @@ app.use("/files", express.static("files"));
 const DB = process.env.DB;
 const DOWNLOADPATH = process.env.DOWNLOADPATH;
 
-const client = new MongoClient(DB, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
+// const client = new MongoClient(DB, {
+//   serverApi: {
+//     version: ServerApiVersion.v1,
+//     strict: true,
+//     deprecationErrors: true,
+//   }
+// });
 
 //mongodb connection----------------------------------------------
 // console.log(process.env.NODE_ENV);
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
-run().catch(console.dir);
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    console.log("Connected to database");
+  })
+  .catch((e) => console.log(e));
 //multer------------------------------------------------------------
 const multer = require("multer");
 const uploadPath = "./files/uploaded/";
@@ -76,11 +71,11 @@ app.post("/extract", async (req, res) => {
 
 app.get("/get-files", async (req, res) => {
   res.send('Welcome to getFiles');
-  try {
-    PdfSchema.find({}).then((data) => {
-      res.send({ status: "ok", data: data });
-    });
-  } catch (error) { }
+  // try {
+  //   PdfSchema.find({}).then((data) => {
+  //     res.send({ status: "ok", data: data });
+  //   });
+  // } catch (error) { }
 });
 
 //apis----------------------------------------------------------------
