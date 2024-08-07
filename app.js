@@ -61,11 +61,12 @@ app.post("/extract", async (req, res) => {
 });
 
 app.get("/get-files", async (req, res) => {
-  try {
-    PdfSchema.find({}).then((data) => {
-      res.send({ status: "ok", data: data });
-    });
-  } catch (error) { }
+  res.send('Ready to get Files')
+  // try {
+  //   PdfSchema.find({}).then((data) => {
+  //     res.send({ status: "ok", data: data });
+  //   });
+  // } catch (error) { }
 });
 
 //apis----------------------------------------------------------------
